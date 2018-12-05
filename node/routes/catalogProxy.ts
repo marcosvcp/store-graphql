@@ -10,7 +10,7 @@ const isPlatformGC = account => account.indexOf('gc_') === 0 || account.indexOf(
 
 export const catalogProxy = async (ctx: ServiceContext) => {
   try {
-    const {vtex: {account, authToken, production, route: {params: {path}}}, headers: {cookie}, query} = ctx
+    const {vtex: {account, authToken, production, route: {params: {path}}}, headers: {cookie}, query, method} = ctx
 
     const [host, basePath] = isPlatformGC(account)
       ? ['api.gocommerce.com', `${account}/search`]
@@ -24,6 +24,7 @@ export const catalogProxy = async (ctx: ServiceContext) => {
         'X-VTEX-Proxy-To': `https://${host}`,
         ...cookie && {cookie},
       },
+      method,
       params: query,
       paramsSerializer: (params) => qs.stringify(params, {arrayFormat: 'repeat'}),
       timeout: TIMEOUT_MS,
